@@ -14,11 +14,20 @@ class ViewController: UIViewController {
     @IBOutlet weak var textField: UITextField!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var sendButton: UIButton!
+    @IBOutlet weak var searchButton: UIButton!
     
-    var todoList: [Result] = []
-    var database: Database!
-    var listQuery: Query!
-    var didSelectedUUID: String?
+    private var todoList: [Result] = []
+    private var database: Database!
+    private var listQuery: Query!
+    private var didSelectedUUID: String?
+    
+    private var searchQuery: Query!
+    private var searchList: [Result] = []
+    private var isSearching: Bool = false
+    
+    private var data: [Result] {
+        return isSearching ? searchList : todoList
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,22 +39,43 @@ class ViewController: UIViewController {
     }
     
     @IBAction func tapSendButton(_ sender: UIButton) {
-           let uuid = self.didSelectedUUID ?? UUID().uuidString
-           let doc = MutableDocument(id: uuid)
-           doc.setString(uuid, forKey: "uuid")
-           doc.setString("list", forKey: "type")
-           doc.setString(textField.text, forKey: "title")
-           
+        let uuid = self.didSelectedUUID ?? UUID().uuidString
+        let doc = MutableDocument(id: uuid)
+        doc.setString(uuid, forKey: "uuid")
+        doc.setString("list", forKey: "type")
+        doc.setString(textField.text, forKey: "title")
+        
         // 資料新增/修改存入DB
-           do {
-               try self.database.saveDocument(doc)
-           } catch {
-               print("saving document error.")
-           }
-           
-           self.textField.text = nil
-           self.didSelectedUUID = nil
-       }
+        do {
+            self.isSearching = false
+            try self.database.saveDocument(doc)
+        } catch {
+            print("saving document error.")
+        }
+        self.textField.text = nil
+        self.didSelectedUUID = nil
+    }
+    
+    
+    @IBAction func tapSearchButton(_ sender: UIButton) {
+        guard let text = textField.text, text != "" else {
+            self.isSearching = false
+            self.tableView.reloadData()
+            return
+        }
+        
+        // 篩選資料
+        searchQuery = QueryBuilder
+            .select(SelectResult.all())
+            .from(DataSource.database(database))
+            .where(Expression.property("type").equalTo(Expression.string("list")).and(Expression.property("title").like(Expression.string("%\(text)%"))))
+        
+        if let rows = try? searchQuery.execute() {
+            self.searchList = Array(rows)
+            self.isSearching = true
+            self.tableView.reloadData()
+        }
+    }
     
     func reload() {
         if listQuery == nil {
@@ -70,14 +100,14 @@ class ViewController: UIViewController {
 extension ViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.todoList.count
+        return self.data.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "ListTableViewCell", for: indexPath) as? ListTableViewCell else {
             return UITableViewCell()
         }
-        if let title = self.todoList[indexPath.row].dictionary(at: 0)?.string(forKey: "title") {
+        if let title = self.data[indexPath.row].dictionary(at: 0)?.string(forKey: "title") {
             cell.contentLabel.text = title
         }
         return cell
@@ -87,14 +117,14 @@ extension ViewController: UITableViewDataSource {
 extension ViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let data = self.todoList[indexPath.row].dictionary(at: 0)
+        let data = self.data[indexPath.row].dictionary(at: 0)
         self.didSelectedUUID = data?.string(forKey: "uuid")
         self.textField.text = data?.string(forKey: "title")
     }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            if let data = self.todoList[indexPath.row].dictionary(at: 0),
+            if let data = self.data[indexPath.row].dictionary(at: 0),
                 let uuid = data.string(forKey: "uuid"),
                 let doc = self.database.document(withID: uuid) {
                 do {
@@ -107,5 +137,4 @@ extension ViewController: UITableViewDelegate {
             }
         }
     }
-    
 }

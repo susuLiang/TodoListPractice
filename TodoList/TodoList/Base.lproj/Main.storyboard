@@ -16,7 +16,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="8Jl-wo-qLn">
-                                <rect key="frame" x="0.0" y="44" width="334" height="60"/>
+                                <rect key="frame" x="0.0" y="44" width="294" height="60"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="60" id="vHX-a5-t9G"/>
                                 </constraints>
@@ -60,34 +60,46 @@
                                     <outlet property="delegate" destination="BYZ-38-t0r" id="tJ9-kF-Ns2"/>
                                 </connections>
                             </tableView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Vfe-8G-8if">
-                                <rect key="frame" x="334" y="44" width="80" height="60"/>
+                            <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="moC-Vu-A2f">
+                                <rect key="frame" x="294" y="44" width="120" height="60"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Vfe-8G-8if">
+                                        <rect key="frame" x="0.0" y="0.0" width="60" height="60"/>
+                                        <state key="normal" title="送出"/>
+                                        <connections>
+                                            <action selector="tapSendButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="mCG-mp-mqH"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="g20-BX-8RM">
+                                        <rect key="frame" x="60" y="0.0" width="60" height="60"/>
+                                        <state key="normal" title="查詢"/>
+                                        <connections>
+                                            <action selector="tapSearchButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="aGh-iC-tSd"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="80" id="ahR-QZ-IMw"/>
+                                    <constraint firstAttribute="width" constant="120" id="0a7-tJ-Gyp"/>
                                 </constraints>
-                                <state key="normal" title="送出"/>
-                                <connections>
-                                    <action selector="tapSendButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="mCG-mp-mqH"/>
-                                </connections>
-                            </button>
+                            </stackView>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
-                            <constraint firstItem="VSR-gB-jBq" firstAttribute="top" secondItem="Vfe-8G-8if" secondAttribute="bottom" id="AO2-A3-fZh"/>
+                            <constraint firstItem="moC-Vu-A2f" firstAttribute="leading" secondItem="8Jl-wo-qLn" secondAttribute="trailing" id="9rn-ID-npl"/>
                             <constraint firstItem="8Jl-wo-qLn" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="CTP-NH-HSt"/>
                             <constraint firstItem="VSR-gB-jBq" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="DWP-nf-X3S"/>
-                            <constraint firstItem="Vfe-8G-8if" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="TYy-3B-fUy"/>
-                            <constraint firstItem="Vfe-8G-8if" firstAttribute="height" secondItem="8Jl-wo-qLn" secondAttribute="height" id="VHH-OZ-jah"/>
+                            <constraint firstAttribute="trailing" secondItem="moC-Vu-A2f" secondAttribute="trailing" id="E9p-pB-euJ"/>
+                            <constraint firstItem="VSR-gB-jBq" firstAttribute="top" secondItem="moC-Vu-A2f" secondAttribute="bottom" id="SKO-Sa-hdR"/>
+                            <constraint firstItem="moC-Vu-A2f" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="YpI-yC-5s2"/>
                             <constraint firstItem="VSR-gB-jBq" firstAttribute="top" secondItem="8Jl-wo-qLn" secondAttribute="bottom" id="hOf-r7-8wx"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="VSR-gB-jBq" secondAttribute="bottom" id="lTY-Yz-2Wz"/>
-                            <constraint firstItem="Vfe-8G-8if" firstAttribute="leading" secondItem="8Jl-wo-qLn" secondAttribute="trailing" id="npm-9l-Yag"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="Vfe-8G-8if" secondAttribute="trailing" id="pEl-Va-06o"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="VSR-gB-jBq" secondAttribute="trailing" id="uHg-Hn-n6Y"/>
                             <constraint firstItem="8Jl-wo-qLn" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="yYi-J2-LJs"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <connections>
+                        <outlet property="searchButton" destination="g20-BX-8RM" id="IHL-nv-Y0S"/>
                         <outlet property="sendButton" destination="Vfe-8G-8if" id="rTJ-e7-q0z"/>
                         <outlet property="tableView" destination="VSR-gB-jBq" id="ekZ-nA-Vxc"/>
                         <outlet property="textField" destination="8Jl-wo-qLn" id="9OP-kf-Pbu"/>
